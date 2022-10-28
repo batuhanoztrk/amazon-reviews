@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  form#get-review-form.form(onsubmit='javascript:return false;')
+    h3.mb-4.text-center=title
+    .form-label-group
+      input.form-control(placeholder='ASIN', type='text', name="asin")
+    .form-label-group
+      input.form-control(placeholder='Page Count', type='number', value=1, name="pageCount")
+    button#getBtn.btn.btn-lg.btn-primary.btn-block(type='submit') Get Reviews
+    p.mt-5.mb-3.text-muted.text-center &copy; Batuhan Öztürk
+block scripts
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js')
+  script(src='/javascripts/get-reviews.js')
