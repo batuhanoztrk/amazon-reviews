@@ -31,11 +31,11 @@ const getReviews = (asin, page) => {
 
         let date = review.querySelector('span[data-hook="review-date"]');
 
-        let star = review.querySelector(
-          'span.a-icon-alt'
-        );
+        let star = review.querySelector("span.a-icon-alt");
 
-        const isVerifiedPurchase = review.querySelector('[data-hook="avp-badge"]');
+        const isVerifiedPurchase = review.querySelector(
+          '[data-hook="avp-badge"]'
+        );
 
         if (date) {
           date = date.textContent;
@@ -87,14 +87,16 @@ router.get("/", function (req, res, next) {
 
 router.post("/get-reviews", async (req, res) => {
   try {
-    const { asin, pageCount } = req.body;
+    let { asin, reviewCount } = req.body;
 
-    const pages = new Array(+pageCount).fill(0);
+    if(!reviewCount) reviewCount = 10;
+
+    const pageCount = Math.ceil(+reviewCount / 10);
 
     const reviews = [];
 
-    for (const [i, v] of pages.entries()) {
-      reviews.push(...(await getReviews(asin, i + 1)));
+    for (let i = 1; i <= pageCount; i++) {
+      reviews.push(...(await getReviews(asin, i)));
     }
 
     res.json({
