@@ -1,8 +1,22 @@
-function s2ab(s) {
-  let buf = new ArrayBuffer(s.length);
-  let view = new Uint8Array(buf);
-  for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
-  return buf;
+function download_file(content, fileName, mimeType) {
+  var a = document.createElement('a');
+  mimeType = mimeType || 'application/octet-stream';
+
+  if (navigator.msSaveBlob) { // IE10
+    navigator.msSaveBlob(new Blob([content], {
+      type: mimeType
+    }), fileName);
+  } else if (URL && 'download' in a) { //html5 A[download]
+    a.href = URL.createObjectURL(new Blob([content], {
+      type: mimeType
+    }));
+    a.setAttribute('download', fileName);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  } else {
+    location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+  }
 }
 
 $("#get-review-form").submit(function (event) {
@@ -24,12 +38,7 @@ $("#get-review-form").submit(function (event) {
 
       const csv = XLSX.utils.sheet_to_csv(ws);
 
-      const blob = new Blob([s2ab(csv)], { type: "text/plain;charset=utf-8" });
-
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = `${formData.get("asin")}.csv`;
-      link.click();
+      download_file(csv, `${formData.get('asin')}.csv`, 'text/csv;encoding:utf-8');
 
       btn.attr("disabled", false);
       btn.text("Get Reviews");

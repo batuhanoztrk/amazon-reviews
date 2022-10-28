@@ -16,12 +16,12 @@ const getReviews = (asin, page) => {
 
       const { document } = dom.window;
 
-      const reviews = [...document.querySelectorAll('div[data-hook="review"]')];
+      const reviews = [...document.querySelectorAll('[data-hook="review"]')];
 
       const _reviews = [];
 
       for (const review of reviews) {
-        const title = review.querySelector('a[data-hook="review-title"]>span');
+        const title = review.querySelector('[data-hook="review-title"]>span');
 
         const comment = review.querySelector(
           'span[data-hook="review-body"]>span'
@@ -32,8 +32,10 @@ const getReviews = (asin, page) => {
         let date = review.querySelector('span[data-hook="review-date"]');
 
         let star = review.querySelector(
-          'i[data-hook="review-star-rating"]>span'
+          'span.a-icon-alt'
         );
+
+        const isVerifiedPurchase = review.querySelector('[data-hook="avp-badge"]');
 
         if (date) {
           date = date.textContent;
@@ -66,6 +68,7 @@ const getReviews = (asin, page) => {
           Title: title ? title.textContent : null,
           Review: comment ? comment.textContent : null,
           Star: star ? star : null,
+          "Is Verified Purchase": !!isVerifiedPurchase,
           Date: date ? date : null,
         });
       }
